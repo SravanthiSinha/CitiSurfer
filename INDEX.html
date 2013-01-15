@@ -1,0 +1,107 @@
+<head></head>
+<body>
+<form name="f" >
+  search:
+  <input id="q" type="text" name="key" >
+  <br/>
+  <input type="radio" name="Category" value="food" >
+  Food<br />
+  <input type="radio" name="Category" value="gym" >
+  Gym<br />
+  <input type="radio" name="Category" value="hospital" >
+  Hospital<br />
+  <input type="radio" name="Category" value="shopping_mall" >
+  Shopping mall<br/>
+  <input type="radio" name="Category" value="beauty_salon" >
+  Beauty salon<br/>
+  <INPUT TYPE="Button" Value="Go" onClick="call(this.form)">
+  <br/>
+</form>
+<script>
+function loadXMLDoc(dname)
+{
+if (window.XMLHttpRequest)
+  {
+  xhttp=new XMLHttpRequest();
+  }
+else
+  {
+  xhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xhttp.open("GET",dname,false);
+xhttp.send("");
+return xhttp.responseXML;
+}
+function call(frm){
+keyvalue=frm.key.value;
+var category = get_radio_value();        
+apilink="https://maps.googleapis.com/maps/api/place/nearbysearch/xml?location=17.421408,78.482208&radius=5000&types="
+apilink2=apilink.concat(category)
+name="&name="
+
+apilink3="&sensor=false&key=AIzaSyAABx40mkY9GvAgTEUVwoYAeVuZ6ksC09A";
+
+xml=loadXMLDoc(apilink2.concat(name).concat(keyvalue).concat(apilink3));
+path2="/PlaceSearchResponse/result/vicinity";
+path="/PlaceSearchResponse/result/name";
+path3="/PlaceSearchResponse/result/geometry/location/lat";
+path4="/PlaceSearchResponse/result/geometry/location/lng";
+// code for IE
+if (window.ActiveXObject)
+{
+var nodes=xml.selectNodes(path);
+var nodes2=xml.selectNodes(path2);
+var nodes3=xml.selectNodes(path3);
+var nodes4=xml.selectNodes(path4);
+for (i=0;i<nodes.length;i++)
+  {
+  
+  document.write(nodes[i].childNodes[0].nodeValue);
+ document.write(nodes2[i].childNodes[0].nodeValue);
+  document.write("<br>");
+  }
+}
+// code for Mozilla, Firefox, Opera, etc.
+else if (document.implementation && document.implementation.createDocument)
+{
+var nodes=xml.evaluate(path, xml, null, XPathResult.ANY_TYPE,null);
+var nodes2=xml.evaluate(path2, xml, null, XPathResult.ANY_TYPE,null);
+var nodes3=xml.evaluate(path3, xml, null, XPathResult.ANY_TYPE,null);
+var nodes4=xml.evaluate(path4, xml, null, XPathResult.ANY_TYPE,null);
+
+var result=nodes.iterateNext();
+var result2=nodes2.iterateNext();
+var result3=nodes3.iterateNext();
+var result4=nodes4.iterateNext();
+while(result)
+  {
+  
+  document.write(result.childNodes[0].nodeValue.concat(" @ addess:")); document.write("<br>");
+   document.write(result2.childNodes[0].nodeValue+ "  location");
+   var location=result3.childNodes[0].nodeValue.concat(",").concat(result4.childNodes[0].nodeValue);
+document.write("<a href="+"check.html?lat="+result3.childNodes[0].nodeValue+"&lng="+result4.childNodes[0].nodeValue+">MAP</a>");
+    document.write("<br>");
+  result=nodes.iterateNext();
+   result2=nodes2.iterateNext();
+    result3=nodes3.iterateNext();
+	 result4=nodes4.iterateNext();
+  }
+}
+}
+function get_radio_value() 
+{
+    var inputs = document.getElementsByName("Category");
+       for (var i = 0; i < inputs.length; i++)
+	    {
+              if (inputs[i].checked) 
+			  {
+                return inputs[i].value;
+             }
+         }
+}
+	 
+		
+
+
+</script>
+</body>
